@@ -1,5 +1,4 @@
 import numpy as np
-import networkx as nx
 
 from pageRankLinear import pageRankLinear
 from pageRankPower import pageRankPower
@@ -17,7 +16,6 @@ def print_adj_matrix_template():
 
 
 def main():
-    np.set_printoptions(precision=5)
     # print_adj_matrix_template()
 
     vector = read_csv('VecteurPersonnalisation_Groupe32.csv')
@@ -29,10 +27,6 @@ def main():
 
     print('pageRankLinear:', pageRankLinear(matrix, 0.9, vector))
     print('pageRankPower:', pageRankPower(matrix, 0.9, vector))
-
-    G = nx.from_numpy_matrix(matrix, create_using=nx.DiGraph)
-    pr = nx.pagerank(G, alpha=0.9, personalization=dict(enumerate(vector)))
-    print('pageRank with networkx:', np.array(list(pr.values())))
 
 
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
 import numpy as np
 
+from normalize import normalize
+
 
 # sources :
 # Slides
@@ -13,27 +15,16 @@ def pageRankPower(A: np.matrix, alpha: float, v: np.array) -> np.array:
     Output: Un vecteur x contenant les scores d'importance des noeuds ordonnés dans
             le même ordre que la matrice d'adjacence
     """
-    if A.shape[0] != A.shape[1]:
-        raise ValueError("A should be a square matrix")
-
-    n = A.shape[0]
-    A = np.asarray(A.T)
-
-    # normalize sink nodes
-    is_sink_node = np.sum(A, axis=0) == 0
-    B = (np.ones_like(A) - np.identity(n)) / (n-1)
-    A[:, is_sink_node] += B[:, is_sink_node]
-
-    # normalize other nodes
-    D_inv = np.diag(1/np.sum(A, axis=0))
-    A = np.dot(A, D_inv)
-
     # Transition probabilities matrix
-    P = A
+    P = normalize(A)
+    n = A.shape[0]
 
-    # Google matrix
+    # Following algorithm is build with horizontal personalization vector
+    # so we work with the transpose of P
+    P = P.T
+
+    # Google matrix cf. slides 142 of chapter 10
     e = np.matrix(np.ones(n))
-    # eT = np.matrix(np.ones(n)).T
     vT = np.matrix(v).T
     G = alpha*P + (1-alpha) * np.dot(vT, e)
     G = np.asarray(G)
@@ -45,7 +36,6 @@ def pageRankPower(A: np.matrix, alpha: float, v: np.array) -> np.array:
 
     for _ in range(max_iteration):
         previous_pi = pi
-        # pi = np.dot(A, pi)*alpha + (1-alpha) * np.ones(n)/n
         pi = np.dot(G, pi)
         residual = np.sum(np.abs(pi-previous_pi))
         if residual < epsilon:

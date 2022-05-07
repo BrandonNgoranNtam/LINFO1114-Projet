@@ -1,5 +1,7 @@
 import numpy as np
 
+from normalize import normalize
+
 
 def pageRankLinear(A: np.matrix, alpha: float, v: np.array) -> np.array:
     """
@@ -10,5 +12,12 @@ def pageRankLinear(A: np.matrix, alpha: float, v: np.array) -> np.array:
     Output: Un vecteur x contenant les scores d'importance des noeuds ordonnés dans
             le même ordre que la matrice d'adjacence.
     """
+    A = normalize(A)
+    n = A.shape[0]
 
-    return np.array([])
+    # Formula cf. slides 148 of chapter 10
+    I = np.identity(n)
+    A = (1-alpha) * np.linalg.matrix_power((I - (alpha*A.T)), -1)
+    x = np.dot(A, v)
+
+    return np.array(x).flatten()  # convert matrix to np.array
