@@ -14,6 +14,9 @@ def pageRankLinear(A: np.matrix, alpha: float, v: np.array) -> np.array:
     """
 
     P = normalize(A)
-    leftside = np.transpose(np.identity(len(A)) - alpha*P)
-    rightside = (1-alpha)*v
-    return np.linalg.solve(leftside,rightside)
+    n = A.shape[0]
+
+    # Formula cf. slides 143 of chapter 10
+    a = (np.identity(n) - alpha*P).T
+    b = (1-alpha)*v
+    return np.linalg.solve(a, b)
